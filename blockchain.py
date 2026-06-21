@@ -1,14 +1,15 @@
 import datetime
+import json
+import hashlib
 
 class Blockchain:
     def __init__(self):
         #กลุ่มของบล็อก
         self.chain = [] #ลิสที่เก็บบล็อกทั้งหมด
         self.create_block(nonce=1, previous_hash='0') #สร้างบล็อกแรก
-        self.create_block(nonce=2, previous_hash='10') #สร้างบล็อกที่สอง
-        self.create_block(nonce=3, previous_hash='20') #สร้างบล็อกที่สาม
-    #สร้างบล็อกใหม่และเพิ่มลงใน chain
+        self.create_block(nonce=10, previous_hash='100') #สร้างบล็อกที่สอง
     
+    #สร้างบล็อกใหม่และเพิ่มลงใน chain
     def create_block(self, nonce, previous_hash):
         #เก็บส่วนประกอบของบล็อก
         block = {
@@ -23,7 +24,14 @@ class Blockchain:
     #ให้บริการข้อมูลของบล็อกล่าสุด
     def get_previous_block(self):
         return self.chain[-1]
+    
+    def hash(self, block):
+        #เรียงข้อมูลของบล็อกเป็นสตริงและเข้ารหัสด้วย SHA-256
+        encoded_block = json.dumps(block, sort_keys=True).encode()
+        return hashlib.sha256(encoded_block).hexdigest()
+
 
 #ใช้งาน blockchain
 blockchain = Blockchain()
-print(blockchain.get_previous_block())
+print(blockchain.hash(blockchain.chain[0])) #แสดงข้อมูลของบล็อกแรก
+print(blockchain.hash(blockchain.chain[1])) #แสดงข้อมูลของบล็อกที่สอง
