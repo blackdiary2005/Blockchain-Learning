@@ -30,6 +30,18 @@ class Blockchain:
         encoded_block = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
 
+    def proof_of_work(self, previous_nonce):
+        new_nonce = 1
+        check_proof = False #เช็คว่าหมายเลข nonce ถูกต้องหรือไม่
+
+        #แก้โจทย์ทางคณิตศาสตร์เพื่อหาหมายเลข nonce ที่ถูกต้อง
+        while check_proof is False:
+            hash_operation = hashlib.sha256(str(new_nonce**2 - previous_nonce**2).encode()).hexdigest()
+            if hash_operation[:4] == '0000':
+                check_proof = True
+            else:
+                new_nonce += 1
+        return new_nonce
 
 #ใช้งาน blockchain
 blockchain = Blockchain()
