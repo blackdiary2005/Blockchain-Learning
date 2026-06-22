@@ -7,6 +7,7 @@ class Blockchain:
     def __init__(self):
         #กลุ่มของบล็อก
         self.chain = [] #ลิสที่เก็บบล็อกทั้งหมด
+        self.transactions = 0 #จำนวนธุรกรรมที่เกิดขึ้นในบล็อก
         self.create_block(nonce=1, previous_hash='0') #สร้างบล็อกแรก
         # self.create_block(nonce=10, previous_hash='00') #สร้างบล็อกที่สอง
         # self.create_block(nonce=20, previous_hash='000') #สร้างบล็อกที่สาม
@@ -17,6 +18,7 @@ class Blockchain:
             "index": len(self.chain) + 1,
             "timestamp":str(datetime.datetime.now()),
             "nonce": nonce,
+            "data": self.transactions,
             "previous_hash": previous_hash
         }
         self.chain.append(block)
@@ -81,6 +83,8 @@ def get_chain():
 
 @app.route('/mining')
 def mining_block():
+    amount = 1000000 #จำนวนโทเคนที่ได้จากการขุด
+    blockchain.transactions += amount  #เพิ่มจำนวนธุรกรรมในบล็อก
     #pow
     previous_block = blockchain.get_previous_block()
     previous_nonce = previous_block['nonce']
@@ -92,6 +96,7 @@ def mining_block():
     block=blockchain.create_block(nonce, previous_hash)
     response = {
         'message': 'Mining successful',
+        'data': block['data'],
         'index': block['index'],
         'timestamp' : block['timestamp'],
         'nonce': block['nonce'],
@@ -105,7 +110,7 @@ def is_valid():
     if is_valid:
         response = {'message': 'The blockchain is valid.'}
     else:
-        response = {'message': '**The blockchain is not valid.***'}
+        response = {'message': '**The blockchain is not valid.**'}
     return jsonify(response), 200
 
 #run server
